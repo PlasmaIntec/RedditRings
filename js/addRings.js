@@ -2,18 +2,26 @@ console.log("ADDING RINGS");
 
 const windowSize = 100;
 
+var union = (setA, setB) => {
+    let _union = new Set(setA)
+    for (let elem of setB) {
+        _union.add(elem)
+    }
+    return _union
+}
+
 var getAllAuthorsByListing = (listing) => {
-    var authors = [];
+    var authors = new Set();
     listing.data.children.forEach(child => {
 		var kind = child.kind;
-		if (kind != "t1") return;
+		if (kind != "t1") return authors;
 		var author = child.data.author;
-		if (author == "[deleted]") return;
-        authors.push(author);
+		if (author == "[deleted]") return authors;
+        authors.add(author);
         var listings = child.data.replies;
-        if (!listings) return;
-        var moreAuthors = getAllAuthorsByListing(listings);
-        authors = authors.concat(moreAuthors);
+        if (!listings) return authors;
+		var moreAuthors = getAllAuthorsByListing(listings);
+		authors = union(authors, moreAuthors);
     })
     return authors;
 }
@@ -136,6 +144,7 @@ var myMain = () => {
 			var authors = getAllAuthorsByListing(json[1]);
 			console.log(authors);
 			authors.forEach(author => {
+				console.log(author)
 				getFavoriteSubredditsByUser(author)
 				.then(subreddits => {
 					var subreddit = subreddits[0];
