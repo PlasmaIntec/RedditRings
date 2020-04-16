@@ -146,6 +146,19 @@ var addRings = () => {
 				})
 			})
 		})
+		.catch(console.log)
 }
 
-window.addEventListener("load", myMain, false);
+// add rings after reddit loads
+window.addEventListener("load", addRings, false);
+
+// add rings after clicking "More Comments" from the Classic View
+var commentAnchors = [...document.getElementsByTagName("a")].filter(e => e.getAttribute("data-click-id") === "comments");
+commentAnchors.forEach(e => e.addEventListener("click", () => setTimeout(addRings, 1000)));
+
+// add rings if the extension icon is clicked
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  	if (request.message === "refresh") {
+		addRings();
+	}
+})
