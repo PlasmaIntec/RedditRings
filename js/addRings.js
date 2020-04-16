@@ -2,6 +2,8 @@ console.log("ADDING RINGS");
 
 const windowSize = 100;
 
+var allRings = [];
+
 var union = (setA, setB) => {
     let _union = new Set(setA)
     for (let elem of setB) {
@@ -87,30 +89,13 @@ var xpath = (xpathToExecute) => {
 
 var insertRing = (user, ring) => {
 	var xPathString = `//div[./*[text()="${user}"]]`;
-	// console.log(xpath(xPathString))
 	try {
-		// xpath(xPathString)[0].after(ring);
-		// var xpath = "//a[text()='SearchingText']";
-		// var matchingElement = document.evaluate(xPathString, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-		// matchingElement.after(ring);
-		// console.log(matchingElement)
-
 		var nodes = xpath(xPathString);
-		nodes.forEach(node => node.after(ring.cloneNode(true)));
-
-		// var aTags = document.getElementsByTagName("a");
-		// var searchText = user;
-		// var found;
-
-		// for (var i = 0; i < aTags.length; i++) {
-		// 	if (aTags[i].textContent == searchText) {
-		// 		found = aTags[i];
-		// 		aTags[i].after(ring);
-		// 		console.log(user, aTags[i])
-		// 	}
-		// }
-
-
+		nodes.forEach(node => {
+			var cloneRing = ring.cloneNode(true);
+			node.after(cloneRing);
+			allRings.push(cloneRing);
+		})
 	} catch (error) {
 		console.log(xPathString)
 		console.log(error)
@@ -128,23 +113,23 @@ var getSubredditIcon = (subreddit) => {
 				} else if (json.data.community_icon) {
 					resolve(json.data.community_icon);
 				} else {
-					console.log(`SUBREDDIT ${subreddit} HAS NO VIABLE ICON`)
-					resolve("https://b.thumbs.redditmedia.com/YHkaogTL3ZYfztRSnxzb25y5Rhq4L0VXWeArjpHNr4w.png")
+					resolve("") // Subreddit has no viable icon
 				}
 			})
 	})
 }
 
-var myMain = () => {
+var addRings = () => {
+	allRings.forEach(ring => {
+		ring.parentElement.removeChild(ring);
+	});
+	allRings = [];
 	var url = `${document.URL}.json`;
 	fetch(url)
 		.then(res => res.json())
 		.then(json => {
-			console.log(json)
 			var authors = getAllAuthorsByListing(json[1]);
-			console.log(authors);
 			authors.forEach(author => {
-				console.log(author)
 				getFavoriteSubredditsByUser(author)
 				.then(subreddits => {
 					var subreddit = subreddits[0];
