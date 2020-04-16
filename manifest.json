@@ -1,17 +1,12 @@
 {
-    "name": "My extension",
+    "name": "Reddit Rings",
     "version": "1.0.0",
-	"description": "My extension doesn't do anything yet!",
+	"description": "Display a user's favorite subreddit",
 	"manifest_version": 2,
 	"background": {
 		"persistent": false,
-		"scripts": ["js/clear_history.js"]
+		"scripts": ["js/background.js"]
 	},
-	"options_ui": {
-		"page": "options.html",
-		"chrome_style": true
-	},
-	"permissions": ["history", "storage"],
 	"icons": {
 		"48": "images/icon_48.png",
 		"96": "images/icon_96.png"
